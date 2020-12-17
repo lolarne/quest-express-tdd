@@ -1,10 +1,10 @@
 const request = require('supertest');
-
 const app = require('../app');
+const connection = require('../connection');
 
 
 describe('Test routes', () => {
-
+  beforeEach(done => connection.query('TRUNCATE bookmark', done));
   it('GET / sends "Hello World" as json', (done) => {
 
     request(app)
@@ -42,11 +42,11 @@ describe('Test routes', () => {
   it('success case', (done) => {
     request(app)
       .post('/bookmarks')
-      .send({ url: 'https://example.ex', title: 'Example' })
+      .send({ url: 'https://ex.ex', title: 'Example' })
       .expect(201)
       .expect('Content-Type', /json/)
       .then(response => {
-        const expected = { id: 1, url: 'https://example.ex', title: 'Example' }
+        const expected = {id:expect.any(Number), url: 'https://ex.ex', title: 'Example' }
         expect(response.body).toEqual(expected);
         done();
       })
