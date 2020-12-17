@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const connection = require('./connection');
-const { response } = require('express');
+const { response, request } = require('express');
 const app = express();
 
 app.use(bodyParser.json());
@@ -28,4 +28,14 @@ app.post('/bookmarks', (request, response) => {
         });
     });
 });
+
+app.get('/bookmarks/:id', (request, response)=>{
+    connection.query('SELECT * FROM bookmarks WHERE id=?', [request.params.id], (err, results)=>{
+        if(err){
+            return response.status(404).send({error: 'Bookmark not found'})
+        }else{
+            return response.status(200).send(results);
+        }
+    })
+})
 module.exports = app;

@@ -46,10 +46,69 @@ describe('Test routes', () => {
       .expect(201)
       .expect('Content-Type', /json/)
       .then(response => {
-        const expected = {id:expect.any(Number), url: 'https://ex.ex', title: 'Example' }
+        const expected = { id: expect.any(Number), url: 'https://ex.ex', title: 'Example' }
         expect(response.body).toEqual(expected);
         done();
       })
       .catch(done);
   });
+
+  describe('GET /bookmarks/:id', () => {
+    const testBookmark = { url: 'https://nodejs.org/', title: 'Node.js' };
+    beforeEach((done) => connection.query(
+      'TRUNCATE bookmark', () => connection.query(
+        'INSERT INTO bookmark SET ?', testBookmark, done
+      )
+    ));
+
+    it('get id failed', () => {
+      request(app)
+
+        .get('/bookmarks/3')
+
+        .expect(404)
+
+        .expect('Content-Type', /json/)
+
+        .then(response => {
+
+          const expected = { error: 'Bookmark not found' }
+
+          expect(response.body).toEqual(expected);
+
+          done();
+
+        });
+    })
+
+  });
+  describe('GET /bookmarks/:id', () => {
+    const testBookmark = { url: 'https://nodejs.org/', title: 'Node.js' };
+    beforeEach((done) => connection.query(
+      'TRUNCATE bookmark', () => connection.query(
+        'INSERT INTO bookmark SET ?', testBookmark, done
+      )
+    ));
+  });
+
+  it('get id success', () => {
+    request(app)
+
+      .get('/bookmarks/1')
+
+      .expect(200)
+
+      .expect('Content-Type', /json/)
+
+      .then(response => {
+
+        const expected = { id: 1, url: 'https://nodejs.org/', title: 'Node.js' }
+
+        expect(response.body).toEqual(expected);
+
+        done();
+
+      });
+  })
 });
+
