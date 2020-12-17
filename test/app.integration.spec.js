@@ -28,10 +28,28 @@ describe('Test routes', () => {
   });
 
   it('error case', (done) => {
-    request(app).post('/bookmarks').send({}).expect(422).expect('Content-Type', /json/).then(response => {
-      const expected = {error: 'required field missing'};
-      expect(response.body).toEqual(expected);
-      done();
-    });
+    request(app)
+      .post('/bookmarks').send({})
+      .expect(422)
+      .expect('Content-Type', /json/)
+      .then(response => {
+        const expected = { error: 'required field missing' };
+        expect(response.body).toEqual(expected);
+        done();
+      });
   })
+
+  it('success case', (done) => {
+    request(app)
+      .post('/bookmarks')
+      .send({ url: 'https://example.ex', title: 'Example' })
+      .expect(201)
+      .expect('Content-Type', /json/)
+      .then(response => {
+        const expected = { id: 1, url: 'https://example.ex', title: 'Example' }
+        expect(response.body).toEqual(expected);
+        done();
+      })
+      .catch(done);
+  });
 });
